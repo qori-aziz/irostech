@@ -52,13 +52,13 @@ void loop() {
   lcd.print("Slat: %i", counterslat, DEC); //Menampilkan jumlah slat yang melewati sensor
   
   //Mekanisme alert kepada pegawai saat pensil dan slat mencapai jumlah tertentu
-  if (counterpensil == 5000){
+  if (counterpensil % 5000 == 0){
 	tone(buzzer, 1000); // Send 1KHz sound signal...
 	delay(1000);        // ...for 1 sec
 	noTone(buzzer);     // Stop sound...
 	delay(1000);
   }
-  if (counterslat == 2000){
+  if (counterslat % 2000 == 0){
 	tone(buzzer, 1000); // Send 1KHz sound signal...
 	delay(1000);        // ...for 1 sec
 	noTone(buzzer);     // Stop sound...
