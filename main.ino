@@ -5,6 +5,7 @@ https://www.playembedded.org/blog/an-object-counter-using-an-ir-sensor-and-ardui
 https://www.makerguides.com/character-i2c-lcd-arduino-tutorial/ :i2c lcd
 https://create.arduino.cc/projecthub/SURYATEJA/use-a-buzzer-module-piezo-speaker-using-arduino-uno-89df45 : buzzer
 https://medium.com/@cgrant/using-the-esp8266-wifi-module-with-arduino-uno-publishing-to-thingspeak-99fc77122e82 : thinkspeak
+https://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/ : Ultrasonic
 */
 
 #include <Wire.h> // Library for I2C communication
@@ -12,6 +13,8 @@ https://medium.com/@cgrant/using-the-esp8266-wifi-module-with-arduino-uno-publis
 #include <SoftwareSerial.h> //Library to allow serial with any pin
 #define IR1                     9        /* digital pin input for ir sensor  */
 #define IR2                     8       /* digital pin input for ir sensor  */
+#define trigPin  11
+#define echoPin  10
 
 //Pin esp8266
 #define RX 4
@@ -41,7 +44,9 @@ int IR2_out = HIGH; //Idem
 int counterpensil = 0;
 int counterslat= 0;
 int i = 0;
-
+//Pengaturan sensor ultrasonik
+long duration;
+int distance;
 
 void setup() {
   // Inisiasi LCD
@@ -52,6 +57,10 @@ void setup() {
   pinMode(IR2, INPUT);
   //Inisiasi buzzer
   pinMode(buzzer, OUTPUT);
+  
+  //Inisialisasi ultrasonik
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
   
   //Inisiasi esp8266
   Serial.begin(9600);
@@ -112,6 +121,23 @@ void countmany (int pin, int counter){
 	delay(100);
 }
 
+//fungsi pengecekan oleh ultrasonik
+void ultrasonik(int inpin, int outpin, long durasi, long jarak){
+	// Clears the trigPin
+	digitalWrite(inpin, LOW);
+	delayMicroseconds(2);
+	// Sets the trigPin on HIGH state for 10 micro seconds
+	digitalWrite(inpin, HIGH);
+	delayMicroseconds(10);
+	digitalWrite(inpin, LOW);
+	// Reads the echoPin, returns the sound wave travel time in microseconds
+	durasi	= pulseIn(outpin, HIGH);
+	// Calculating the distance
+	jarak= durasi*0.034/2;
+	// Prints the distance on the Serial Monitor
+	Serial.print("jarak: ");
+	Serial.println(jarak);
+}
 //Fungsi pengiriman data ke thinkspeak
 void sendCommand(String command, int maxTime, char readReplay[]) {
   Serial.print(countTrueCommand);
